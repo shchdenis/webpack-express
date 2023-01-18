@@ -1,0 +1,1 @@
+Базовый шаблон Express и Webpack с включенной транспиляцией ES6+ babel, Hot Module Reloading.
