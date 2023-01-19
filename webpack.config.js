@@ -2,6 +2,8 @@ const path = require('path');
 const webpack = require('webpack')
 const HtmlWebpackPlugin = require('html-webpack-plugin')
 const MiniCssExtractPlugin = require("mini-css-extract-plugin")
+const CopyWebpackPlugin = require("copy-webpack-plugin")
+const FileIncludeWebpackPlugin = require('file-include-webpack-plugin')
 const mode = process.env.NODE_ENV || "development"
 const devMode = mode === "development"
 const target = devMode ? "web" : "browserslist"
@@ -20,8 +22,6 @@ module.exports = {
     //     open: true,
     //     hot: true
     // },
-    // context: path.resolve(__dirname, "src"),
-
     entry: {
         main: PATH
     },
@@ -34,7 +34,20 @@ module.exports = {
     },
     module: {
         rules: [
-            { test: /\.html$/i, use: 'html-loader' },
+            {
+                test: /\.html$/i,
+                include: [
+                    path.resolve(__dirname, '.html'),
+                    // path.resolve(__dirname, 'html/header.html'),
+                ],
+                use: 'html-loader'
+            },
+            {
+                test: /\.ejs$/,
+                use: {
+                    loader: "html-loader"
+                }
+            },
             {
                 test: /\.s[ac]ss$/i,
                 use: [
@@ -109,7 +122,6 @@ module.exports = {
                         },
                     ],
                 type: 'asset/resource',
-                type: 'asset/resource',
                 generator: {
                     filename: 'img/[name][ext]'
                 }
@@ -118,8 +130,15 @@ module.exports = {
     },
     plugins: [
         new HtmlWebpackPlugin({
+            title: 'MAIN',
             template: './src/html/index.html',
             filename: "./index.html",
+            excludeChunks: ['server']
+        }),
+        new HtmlWebpackPlugin({
+            title: 'ABOUT',
+            template: './src/html/pages/about.html',
+            filename: "./about.html",
             excludeChunks: ['server']
         }),
         new MiniCssExtractPlugin({
@@ -127,7 +146,13 @@ module.exports = {
             chunkFilename: "[id].css"
         }),
         new webpack.HotModuleReplacementPlugin(),
-        new webpack.NoEmitOnErrorsPlugin()
+        new webpack.NoEmitOnErrorsPlugin(),
+        // new CopyWebpackPlugin({
+        //     patterns: [
+        //         { from: "src/html", to: "views" }
+        //     ]
+        // })
+
     ],
 
 };

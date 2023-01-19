@@ -10,9 +10,10 @@ const app = express(),
     compiler = webpack(config)
 app.use(webpackDevMiddleware(compiler, {
     publicPath: config.output.publicPath
+
 }))
 app.use(webpackHotMiddleware(compiler))
-app.get('*', (req, res, next) => {
+app.get('/', (req, res, next) => {
     compiler.outputFileSystem.readFile(HTML_FILE, (err, result) => {
         if (err) {
             return next(err)
@@ -22,6 +23,7 @@ app.get('*', (req, res, next) => {
         res.end()
     })
 })
+
 const PORT = process.env.PORT || 8080
 app.listen(PORT, () => {
     console.log(`App listening to ${PORT}....`)
